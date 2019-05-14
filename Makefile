@@ -2,11 +2,9 @@ ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 
-NAME = libft_malloc_$(HOSTTYPE).so
+NAME = otool
 
-SYMLINK = libft_malloc.so
-
-SRC_FILES = 
+SRC_FILES = otool.c macho.c get_image.c dumphex.c
 
 SRC_PATH = srcs/
 
@@ -34,8 +32,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@make -s -C $(LIB_PATH)
-	@$(CC) $(CFLAGS) -shared -o $@ $(OBJ) ./libft/libft.a
-	@ln -sF $(NAME) $(SYMLINK)
+	@$(CC) $(CFLAGS) -o $@ $(OBJ) ./libft/libft.a
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -I $(INC) -o $@ -c $<

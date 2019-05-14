@@ -1,70 +1,35 @@
 #include "otool.h"
 
-static void             print_hex(int nb)
+int main(int ac, char **av)
 {
-        const char      *tmp = "0123456789abcdef";
-
-        if (nb >= 16)
-        {
-                print_hex(nb / 16);
-                print_hex(nb % 16);
-        }
-        else
-                ft_putchar(tmp[nb]);
-}
-
-int     main(int ac, char **av)
-{
-    int     fd;
-    size_t  size;
-    void    *ptr;
-    struct stat     stat;
-    void    *header;
-    void    *load;
-    void    *segment;
-    void    *section;
-    
+    t_otool *file;
+    void *ptr;
+    int i;
 
     if (ac < 2)
         return (0);
-    fd = open(av[1], O_RDONLY);
-    fstat(fd, &stat);
-    size = (size_t)stat.st_size;
-    ptr = mmap(0, size, PROT, FLAGS, fd, 0);
-    printf("%x\n", *(int*)ptr);
-    if (*(int*)ptr == MH_MAGIC)
-        printf("32bits\n");
-    else if (*(int*)ptr == MH_MAGIC_64)
+    file = malloc(sizeof(t_otool));
+    i = 0;
+    while (av[++i])
     {
-        header = (struct mach_header_64*)ptr;
-        printf("64bits\n");
-        printf("%d Loads\n", ((struct mach_header_64*)header)->ncmds);
-        int i = ((struct mach_header_64*)header)->ncmds;
-        load = ptr + sizeof(struct mach_header_64);
-        segment = load;
-        while (i > 0)
+        ft_putstr(av[i]);
+        ft_putstr(":\n");
+        if (!(ptr = get_image(file, av[i])))
         {
-            //printf("load size : %d\n", ((struct load_command*)load)->cmdsize);
-            if (((struct segment_command_64*)segment)->cmd & LC_SEGMENT_64)
-            {
-                write(1, ((struct segment_command_64*)segment)->segname, 16);
-                ft_putchar('\n');
-                int section_nb = ((struct segment_command_64*)segment)->nsects;
-                section = segment + (((struct segment_command_64*)segment)->cmdsize - (sizeof(struct section_64) * ((struct segment_command_64*)segment)->nsects));
-                while (section_nb)
-                {
-                    printf("%s\n", ((struct section_64*)section)->sectname);
-                    section += sizeof(struct section_64);
-                    section_nb--;
-                }
-                ft_putchar('\n');
-                segment = segment + ((struct segment_command_64*)segment)->cmdsize;
-            }
-            i--;
+            ft_putendl_fd("ERROR", 2);
+            free(file);
+            return (1);
         }
+        else
+            file->ptr = ptr;
+        if (*(uint32_t *)ptr == MH_MAGIC)
+            arch_32_macho(ptr);
+        else if (*(uint32_t *)ptr == MH_MAGIC_64)
+            arch_64_macho(ptr);
+        else
+            printf("unknown arch\n");
+        munmap(ptr, file->size);
     }
-    else
-        printf("unknown arch\n");
-    munmap(ptr, size);
+    free(file);
     return (0);
 }
