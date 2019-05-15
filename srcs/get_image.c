@@ -17,5 +17,6 @@ void    *get_image(t_otool *file, char *av)
         ft_putendl_fd("mmap failed.\n", 2);
         return (NULL);
     }
+    save_filetype(file, ptr);
     return (ptr);
 }
