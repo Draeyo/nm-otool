@@ -2,7 +2,7 @@
 
 static void     fill_filetype(t_otool *file, char *type, int endian)
 {
-    file->type = type;
+    ft_strcpy(file->type, type);
     file->endian = endian;
 }
 

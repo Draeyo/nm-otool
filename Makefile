@@ -4,7 +4,7 @@ endif
 
 NAME = otool
 
-SRC_FILES = otool.c macho.c get_image.c dumphex.c
+SRC_FILES = otool.c macho.c get_image.c dumphex.c save_filetype.c swap_bytes.c swap_mach.c fat.c swap_fat.c align.c
 
 SRC_PATH = srcs/
 

@@ -17,7 +17,7 @@
 
 # define B_ENDIAN 0
 # define L_ENDIAN 1
-# define UNK_ENDIAN
+# define UNK_ENDIAN -1
 
 // TMP
 # include <stdio.h>
@@ -33,10 +33,16 @@ typedef struct s_otool
         int     fd;
         char    type[5];
         int     endian;
-}               t_otool;
+}
+               t_otool;
+void            ft_otool(char *arg, t_otool *file);
+void            read_file(void *ptr, t_otool *file);
 
 void            arch_64_macho(void *ptr);
 void            arch_32_macho(void *ptr);
+
+void            arch_64_fat(void *ptr, t_otool *file);
+void            arch_32_fat(void *ptr, t_otool *file);
 
 void            *get_image(t_otool *file, char *av);
 
@@ -63,5 +69,11 @@ void            swap_segment_command_64(struct segment_command_64* sg);
 
 void            swap_section(struct section *s, uint32_t nsects);
 void            swap_section_64(struct section_64 *s, uint32_t nsects);
+
+void            swap_fat_header(struct fat_header *fh);
+void            swap_fat_arch(struct fat_arch *fa);
+void            swap_fat_arch_64(struct fat_arch_64 *fa);
+
+size_t		align_number(size_t input, size_t align);
 
 # endif
