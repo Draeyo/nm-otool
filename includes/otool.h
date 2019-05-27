@@ -6,6 +6,7 @@
 # include <sys/mman.h>
 # include <mach-o/loader.h>
 # include <mach-o/fat.h>
+# include <mach-o/arch.h>
 
 # include "libft.h"
 
