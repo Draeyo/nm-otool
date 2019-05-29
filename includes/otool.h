@@ -47,7 +47,7 @@ void            arch_32_fat(void *ptr, t_otool *file);
 
 void            *get_image(t_otool *file, char *av);
 
-void            DumpHex(const void *data, size_t size);
+void            DumpHex(void *data, uint32_t offset, size_t size);
 
 void            save_filetype(t_otool *file, void *ptr);
 

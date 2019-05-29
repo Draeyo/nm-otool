@@ -16,7 +16,7 @@ static void scroll_section_64_macho(void *ptr, struct segment_command_64 *segmen
             if (!ft_strcmp(section->sectname, SECT_TEXT))
             {
                 printf("Contents of (%s,%s) section\n", section->segname, section->sectname);
-                DumpHex(ptr + section->offset, section->size);
+                DumpHex(ptr, section->offset, section->size);
             }
             section++;
             section_nb--;
@@ -40,7 +40,7 @@ static void scroll_section_32_macho(void *ptr, struct segment_command *segment, 
             if (!ft_strcmp(section->sectname, SECT_TEXT))
             {
                 printf("Contents of (%s,%s) section\n", segment->segname, section->sectname);
-                DumpHex(ptr + section->offset, section->size);
+                DumpHex(ptr, section->offset, section->size);
             }
             section++;
             section_nb--;

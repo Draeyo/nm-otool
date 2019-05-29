@@ -1,16 +1,18 @@
 #include "otool.h"
 
-void    DumpHex(const void *data, size_t size)
+void    DumpHex(void *ptr, uint32_t offset, size_t size)
 {
-    size_t  i;
+    uint32_t    i;
+    void        *data;
 
     i = 0;
-    while (i < size)
+    data = ptr + offset;
+    while (i < (uint32_t)size)
     {
         if (i % 16 == 0)
-            printf("%016zx\t", i);
+            printf("%016x\t", i + offset);
         printf("%02x ", ((unsigned char *)data)[i]);
-        if ((i + 1) % 16 == 0 || i + 1 == size)
+        if ((i + 1) % 16 == 0 || i + 1 == (uint32_t)size)
             printf("\n");
         ++i;
     }
