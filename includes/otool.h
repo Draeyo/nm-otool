@@ -34,8 +34,8 @@ typedef struct s_otool
         int     fd;
         char    type[5];
         int     endian;
-}
-               t_otool;
+}               t_otool;
+
 void            ft_otool(char *arg, t_otool *file);
 void            read_file(void *ptr, t_otool *file);
 

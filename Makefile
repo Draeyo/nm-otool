@@ -2,15 +2,45 @@ ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 
-NAME = otool
+OTOOL = otool
 
-SRC_FILES = otool.c macho.c get_image.c dumphex.c save_filetype.c swap_bytes.c swap_mach.c fat.c swap_fat.c align.c
+NM = nm
 
 SRC_PATH = srcs/
 
+NM_DIR = $(SRC_PATH)nm/
+
+OTOOL_DIR = otool/
+
+STATIC_DIR = static/
+
+NM_FILES = $(NM_DIR)nm.c
+		$(STATIC_FILES)
+
+OTOOL_FILES = $(OTOOL_DIR)otool.c \
+			$(OTOOL_DIR)macho.c \
+			$(OTOOL_DIR)fat.c \
+			$(OTOOL_DIR)dumphex.c \
+			$(STATIC_FILES)
+
+STATIC_FILES = $(STATIC_DIR)align.c \
+			$(STATIC_DIR)swap_fat.c \
+			$(STATIC_DIR)swap_mach.c \
+			$(STATIC_DIR)swap_bytes.c \
+			$(STATIC_DIR)save_filetype.c \
+			$(STATIC_DIR)get_image.c \
+
+SRC_FILES = $(NM_FILES) $(OTOOL_FILES)
+
+OTOOL_SRC = $(OTOOL_FILES) $(STATIC_FILES)
+
+NM_SRC = $(NM_FILES) $(STATIC_FILES)
+
 SRC = $(addprefix $(SRC_PATH),$(SRC_FILES))
 
-OBJ = $(SRC:.c=.o)
+OTOOL_OBJ = $(SRC:.c=.o)
+
+NM_OBJ = $(SRC:.c=.o)
 
 LIB_NAME = -lft
 

@@ -1,6 +1,6 @@
-#include "otool.h"
+#include "nm.h"
 
-void    read_file(void *ptr, t_otool *file)
+void    read_file_nm(void *ptr, t_nm *file)
 {
     uint32_t    magic;
 
@@ -17,36 +17,33 @@ void    read_file(void *ptr, t_otool *file)
         printf("unknown architecture\n");
 }
 
-void    ft_otool(char *arg, t_otool *file)
+void    ft_nm(char *arg, t_nm *file)
 {
-    void        *ptr;
+    void    *ptr;
 
     ft_putstr(arg);
     ft_putstr(":\n");
     if (!(ptr = get_image(file, arg)))
-    {
         ft_putendl_fd("ERROR", 2);
-        free(file);
-    }
     else
+    {
         file->ptr = ptr;
-    // magic = *(uint32_t*)ptr;
-    read_file(ptr, file);
-    munmap(ptr, file->size);
+        read_file_nm(ptr, file);
+        munmap(ptr, file->size);
+    }
 }
 
-int main(int ac, char **av)
+int     main(int ac, char **av)
 {
-    t_otool *file;
-    // void *ptr;
-    int i;
+    t_nm    *file;
+    int     i;
 
     if (ac < 2)
         return (0);
-    file = malloc(sizeof(t_otool));
+    file = malloc(sizeof(t_nm));
     i = 0;
     while (av[++i])
-        ft_otool(av[i], file);
+        ft_nm(av[i], file);
     free(file);
     return (0);
 }
