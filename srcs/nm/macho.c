@@ -1,28 +1,51 @@
 #include "nm.h"
 
 // take symtab_command as argument instead of segment_command
-static void scroll_section_64_macho(void *ptr, struct segment_command_64 *segment, int endian)
+static void scroll_section_64_macho(void *ptr, struct symtab_command *segment, int endian)
 {
-    // use nlist.h and stab.h to get structure for symtab
-    // offset and nb of symbols are in symtab_commmand
-    if (segment->cmd == LC_SYMTAB)
+    struct nlist_64    *nlist;
+    uint32_t            i;
+    void                *strtable;
+    char                *funcname;
+
+    nlist = (void*)ptr + segment->symoff;
+    strtable = (void*)ptr + segment->stroff;
+    i = 0;
+    while (i < segment->nsyms)
     {
-        // if (endian == L_ENDIAN)
-            // swap_section_64(section, segment->nsects);
-        // DumpHex(ptr, section->offset, section->size);
+        if (nlist->n_value)
+            printf("%16X ", nlist->n_value);
+        else
+            printf("\t\t\t\t ");
+        // to change
+        printf("X ");
+        ft_putendl(strtable + nlist->n_un.n_strx);
+        nlist = (void*)nlist + sizeof(struct nlist_64);
+        i++;
     }
 }
 
 // take symtab_command as argument instead of segment_command
-static void scroll_section_32_macho(void *ptr, struct segment_command *segment, int endian)
+static void scroll_section_32_macho(void *ptr, struct symtab_command *segment, int endian)
 {
-    // use nlist.h and stab.h to get structure for symtab
-    // offset and nb of symbols are in symtab_commmand
-    if (segment->cmd == LC_SYMTAB)
+    struct nlist    *nlist;
+    uint32_t        i;
+    void            *strtable;
+
+    nlist = (void*)ptr + segment->symoff;
+    strtable = (void*)ptr + segment->stroff;
+    i = 0;
+    while (i < segment->nsyms)
     {
-        // if (endian == L_ENDIAN)
-            // swap_section(section, segment->nsects);
-        // DumpHex(ptr, section->offset, section->size);
+        if (nlist->n_value)
+            printf("%16X ", nlist->n_value);
+        else
+            printf("\t\t\t\t ");
+        // to change
+        printf("X ");
+        ft_putendl(strtable + nlist->n_un.n_strx);
+        nlist = (void*)nlist + sizeof(struct nlist);
+        i++;
     }
 }
 
@@ -47,8 +70,10 @@ void arch_64_macho(void *ptr)
         swap_segment_command_64(segment);
     while (i > 0)
     {
-        scroll_section_64_macho(ptr, segment, endian);
-        segment += ((struct segment_command_64 *)segment)->cmdsize;
+        if ((uint32_t)segment == LC_SYMTAB)
+            scroll_section_64_macho(ptr, segment, endian);
+        // segment += ((struct segment_command_64 *)segment)->cmdsize;
+        segment = (void*)segment + (uint32_t)((void*)segment + sizeof(uint32_t));
         if (endian == L_ENDIAN)
             swap_segment_command_64(segment);
         i--;
@@ -76,8 +101,9 @@ void arch_32_macho(void *ptr)
         swap_segment_command(segment);
     while (i > 0)
     {
-        scroll_section_32_macho(ptr, segment, endian);
-        segment += ((struct segment_command *)segment)->cmdsize;
+        if ((uint32_t)segment == LC_SYMTAB)
+            scroll_section_32_macho(ptr, segment, endian);
+        segment = (void*)segment + (uint32_t)((void*)segment + sizeof(uint32_t));
         if (endian == L_ENDIAN)
             swap_segment_command(segment);
         i--;
