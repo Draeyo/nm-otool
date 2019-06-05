@@ -1,4 +1,4 @@
-#include "otool.h"
+#include "nm.h"
 
 void swap_fat_header(struct fat_header *fh)
 {

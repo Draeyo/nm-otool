@@ -1,46 +1,53 @@
-ifeq ($(HOSTTYPE),)
-	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
-endif
-
 OTOOL = otool
 
 NM = nm
 
 SRC_PATH = srcs/
 
-NM_DIR = $(SRC_PATH)nm/
+NM_DIR = srcs/nm/
 
-OTOOL_DIR = otool/
+OTOOL_DIR = srcs/otool/
 
-STATIC_DIR = static/
+STATIC_DIR = srcs/static/
 
-NM_FILES = $(NM_DIR)nm.c
-		$(STATIC_FILES)
+NM_FILES = $(NM_DIR)nm.c \
+			$(NM_DIR)macho.c \
+			$(NM_DIR)save_filetype.c \
+			$(NM_DIR)get_image.c \
+			$(NM_DIR)align.c \
+			$(NM_DIR)swap_fat.c \
+			$(NM_DIR)swap_mach.c \
+			$(NM_DIR)swap_bytes.c
+		#$(STATIC_FILES)
 
 OTOOL_FILES = $(OTOOL_DIR)otool.c \
 			$(OTOOL_DIR)macho.c \
 			$(OTOOL_DIR)fat.c \
 			$(OTOOL_DIR)dumphex.c \
-			$(STATIC_FILES)
+			$(OTOOL_DIR)save_filetype.c \
+			$(OTOOL_DIR)get_image.c \
+			$(OTOOL_DIR)align.c \
+			$(OTOOL_DIR)swap_fat.c \
+			$(OTOOL_DIR)swap_mach.c \
+			$(OTOOL_DIR)swap_bytes.c
+			#$(STATIC_FILES)
 
-STATIC_FILES = $(STATIC_DIR)align.c \
+#STATIC_FILES = $(STATIC_DIR)align.c \
 			$(STATIC_DIR)swap_fat.c \
 			$(STATIC_DIR)swap_mach.c \
-			$(STATIC_DIR)swap_bytes.c \
-			$(STATIC_DIR)save_filetype.c \
-			$(STATIC_DIR)get_image.c \
+			$(STATIC_DIR)swap_bytes.c 
 
 SRC_FILES = $(NM_FILES) $(OTOOL_FILES)
 
-OTOOL_SRC = $(OTOOL_FILES) $(STATIC_FILES)
+OTOOL_SRC = $(OTOOL_FILES)# $(STATIC_FILES)
 
-NM_SRC = $(NM_FILES) $(STATIC_FILES)
+NM_SRC = $(NM_FILES)# $(STATIC_FILES)
 
 SRC = $(addprefix $(SRC_PATH),$(SRC_FILES))
 
-OTOOL_OBJ = $(SRC:.c=.o)
+OTOOL_OBJ = $(OTOOL_SRC:.c=.o)
 
-NM_OBJ = $(SRC:.c=.o)
+NM_OBJ = $(NM_SRC:.c=.o)
 
 LIB_NAME = -lft
 
@@ -58,20 +65,27 @@ ENDC = \033[0m
 
 .PHONY: all clean fclean re
 
-all: $(NAME)
+all: $(OTOOL) $(NM)
 
-$(NAME): $(OBJ)
+$(OTOOL): $(OTOOL_OBJ)
 	@make -s -C $(LIB_PATH)
-	@$(CC) $(CFLAGS) -o $@ $(OBJ) ./libft/libft.a
+	@$(CC) $(CFLAGS) -o $@ $(OTOOL_OBJ) ./libft/libft.a
 
-%.o: %.c
+$(NM): $(NM_OBJ)
+	@make -s -C $(LIB_PATH)
+	@$(CC) $(CFLAGS) -o $@ $(NM_OBJ) ./libft/libft.a
+	
+$(OTOOL_OBJ):%.o: %.c
+	@$(CC) $(CFLAGS) -I $(INC) -o $@ -c $<
+
+$(NM_OBJ):%.o:%.c
 	@$(CC) $(CFLAGS) -I $(INC) -o $@ -c $<
 
 clean:
-	@(rm -f $(OBJ))
+	@(rm -f $(NM_OBJ) $(OTOOL_OBJ))
 
 fclean: clean
-	@(rm -f $(NAME) $(SYMLINK))
+	@(rm -f $(NM) $(OTOOL))
 	@make -s -C $(LIB_PATH) fclean
 
 re: fclean all

@@ -5,7 +5,7 @@ static void scroll_section_64_macho(void *ptr, struct segment_command_64 *segmen
     int section_nb;
     struct section_64 *section;
 
-    if (segment->segname == SEG_TEXT)
+    if (!ft_strcmp(segment->segname, SEG_TEXT))
     {
         section_nb = segment->nsects;
         section = (void *)segment + (segment->cmdsize - (sizeof(struct section_64) * segment->nsects));
@@ -29,7 +29,7 @@ static void scroll_section_32_macho(void *ptr, struct segment_command *segment, 
     int section_nb;
     struct section *section;
 
-    if (segment->segname == SEG_TEXT)
+    if (!ft_strcmp(segment->segname, SEG_TEXT))
     {
         section_nb = segment->nsects;
         section = (void *)segment + (segment->cmdsize - (sizeof(struct section) * segment->nsects));
@@ -69,10 +69,10 @@ void arch_64_macho(void *ptr)
         swap_segment_command_64(segment);
     while (i > 0)
     {
-        if ((uint32_t)segment == LC_SEGMENT_64)
+        if (((struct load_command*)segment)->cmd == LC_SEGMENT_64)
             scroll_section_64_macho(ptr, segment, endian);
-        segment = (void*)segment + (uint32_t)((void*)segment + sizeof(uint32_t));
         // segment += ((struct segment_command_64 *)segment)->cmdsize;
+        segment += ((struct load_command *)segment)->cmdsize;
         if (endian == L_ENDIAN)
             swap_segment_command_64(segment);
         i--;
@@ -100,10 +100,10 @@ void arch_32_macho(void *ptr)
         swap_segment_command(segment);
     while (i > 0)
     {
-        if ((uint32_t)segment == LC_SEGMENT)
+        if (((struct load_command*)segment)->cmd == LC_SEGMENT)
             scroll_section_32_macho(ptr, segment, endian);
-        segment = (void*)segment + (uint32_t)((void*)segment + sizeof(uint32_t));
-        // segment += ((struct segment_command *)segment)->cmdsize;
+        // segment += ((struct segment_command*)segment)->cmdsize;
+        segment += ((struct load_command *)segment)->cmdsize;
         if (endian == L_ENDIAN)
             swap_segment_command(segment);
         i--;
