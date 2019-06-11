@@ -71,7 +71,6 @@ void arch_64_macho(void *ptr)
     {
         if (((struct load_command*)segment)->cmd == LC_SEGMENT_64)
             scroll_section_64_macho(ptr, segment, endian);
-        // segment += ((struct segment_command_64 *)segment)->cmdsize;
         segment += ((struct load_command *)segment)->cmdsize;
         if (endian == L_ENDIAN)
             swap_segment_command_64(segment);
@@ -102,7 +101,6 @@ void arch_32_macho(void *ptr)
     {
         if (((struct load_command*)segment)->cmd == LC_SEGMENT)
             scroll_section_32_macho(ptr, segment, endian);
-        // segment += ((struct segment_command*)segment)->cmdsize;
         segment += ((struct load_command *)segment)->cmdsize;
         if (endian == L_ENDIAN)
             swap_segment_command(segment);

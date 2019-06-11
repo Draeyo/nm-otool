@@ -1,22 +1,93 @@
 #include "nm.h"
 
-static void     print_symtype(uint8_t type)
+static void get_sections(t_nm *file, struct segment_command *segment, int endian)
 {
+    uint32_t        i;
+    struct section  *sect;
+    t_sections      *tmp;
+
+    i = 0;
+    sect = (void*)segment + (segment->cmdsize - (sizeof(struct segment_command) * segment->nsects));
+    if (endian == L_ENDIAN)
+        swap_section(sect, segment->nsects);
+    while (i < segment->nsects)
+    {
+        tmp = malloc(sizeof(t_sections));
+        ft_strcpy(tmp->segname, sect->segname);
+        ft_strcpy(tmp->sectname, sect->sectname);
+        tmp->next = NULL;
+        if (!file->sections)
+        {
+            file->sections = tmp;
+            file->sect_start = file->sections;
+        }
+        else
+        {
+            file->sections->next = tmp;
+            file->sections = file->sections->next;
+        }
+        sect++;
+        i++;
+    }
+}
+
+static void get_sections_64(t_nm *file, struct segment_command_64 *segment, int endian)
+{
+    uint32_t            i;
+    struct section_64   *sect;
+    t_sections          *tmp;
+
+    i = 0;
+    sect = (void*)segment + (segment->cmdsize - (sizeof(struct segment_command_64) * segment->nsects));
+    if (endian == L_ENDIAN)
+        swap_section_64(sect, segment->nsects);
+    while (i < segment->nsects)
+    {
+        tmp = malloc(sizeof(t_sections));
+        ft_strcpy(tmp->segname, sect->segname);
+        ft_strcpy(tmp->sectname, sect->sectname);
+        tmp->next = NULL;
+        if (!file->sections)
+        {
+            file->sections = tmp;
+            file->sect_start = file->sections;
+        }
+        else
+        {
+            file->sections->next = tmp;
+            file->sections = file->sections->next;
+        }
+        sect++;
+        i++;
+    }
+}
+
+static void print_symtype(uint8_t type)
+{
+    uint8_t tmp;
+
+    tmp = type & N_TYPE;
     // external uppercase, internal lowercase
     // apply mask to check type (check masks in nlist and stab)
     ft_putchar(' ');
-    if (type | N_UNDF)
-        ft_putchar('U');
-    else if (type | N_ABS)
-        ft_putchar('A');
+    if (tmp == N_UNDF)
+        ft_putchar(type & N_EXT ? 'U' : 'u');
+    else if (tmp == N_ABS)
+        ft_putchar(type & N_EXT ? 'A' : 'a');
+    else if (tmp == N_SECT)
+        ft_putchar(type & N_EXT ? 'T' : 't');
+    else if (tmp == N_PBUD)
+        ft_putchar(type & N_EXT ? 'X' : 'x');
+    else if (tmp == N_INDR)
+        ft_putchar(type & N_EXT ? 'X' : 'x');
     else
-        ft_putchar('X');
+        ft_putchar('?');
     ft_putchar(' ');
 }
 
-static int      hex_padding16(unsigned long nb)
+static int hex_padding16(unsigned long nb)
 {
-    int     i;
+    int i;
 
     i = 16;
     while (nb > 0 && i > 0)
@@ -27,7 +98,7 @@ static int      hex_padding16(unsigned long nb)
     return (i);
 }
 
-static void     print_hex(unsigned long nb)
+static void print_hex(unsigned long nb)
 {
     const char *tmp = "0123456789abcdef";
 
@@ -40,12 +111,12 @@ static void     print_hex(unsigned long nb)
         ft_putchar(tmp[nb]);
 }
 
-static void scroll_section_64_macho(void *ptr, struct symtab_command *segment, int endian)
+static void scroll_section_64_macho(void *ptr, struct symtab_command *segment, int endian, t_nm *file)
 {
     struct nlist_64 *nlist;
     uint32_t i;
     void *strtable;
-    int     padding;
+    int padding;
 
     nlist = (void *)ptr + segment->symoff;
     strtable = (void *)ptr + segment->stroff;
@@ -53,29 +124,35 @@ static void scroll_section_64_macho(void *ptr, struct symtab_command *segment, i
     (void)endian;
     while (i < segment->nsyms)
     {
-        padding = hex_padding16(nlist->n_value);
-        if (padding < 16)
-            while (padding--)
-                ft_putchar('0');
-        else
-            while (padding--)
-                ft_putchar(' ');
-        if (nlist->n_value)
-            print_hex(nlist->n_value);
-        print_symtype(nlist->n_type);
-        // ft_putstr(" X ");
-        ft_putendl(strtable + nlist->n_un.n_strx);
+        if (!(nlist->n_type & N_STAB))
+        {
+            padding = hex_padding16(nlist->n_value);
+            if (padding < 16)
+                while (padding--)
+                    ft_putchar('0');
+            else
+                while (padding--)
+                    ft_putchar(' ');
+            if (nlist->n_value)
+                print_hex(nlist->n_value);
+            // marche pas, a voir
+            // printf(" %#X ", nlist->n_sect);
+            ft_putstr(file->sect_start[nlist->n_sect].sectname);
+            //
+            print_symtype(nlist->n_type);
+            ft_putendl(strtable + nlist->n_un.n_strx);
+        }
         nlist = (void *)nlist + sizeof(struct nlist_64);
         i++;
     }
 }
 
-static void scroll_section_32_macho(void *ptr, struct symtab_command *segment, int endian)
+static void scroll_section_32_macho(void *ptr, struct symtab_command *segment, int endian, t_nm *file)
 {
     struct nlist *nlist;
     uint32_t i;
     void *strtable;
-    int     padding;
+    int padding;
 
     nlist = (void *)ptr + segment->symoff;
     strtable = (void *)ptr + segment->stroff;
@@ -92,16 +169,18 @@ static void scroll_section_32_macho(void *ptr, struct symtab_command *segment, i
                 ft_putchar(' ');
         if (nlist->n_value)
             print_hex(nlist->n_value);
-        print_hex(nlist->n_value);
+        // marche pas, a voir
+        if (nlist->n_sect > 0)
+            printf(" %s ", file->sect_start[nlist->n_sect].sectname);
+        //
         print_symtype(nlist->n_type);
-        // ft_putstr(" X ");
         ft_putendl(strtable + nlist->n_un.n_strx);
         nlist = (void *)nlist + sizeof(struct nlist);
         i++;
     }
 }
 
-void arch_64_macho(void *ptr)
+void arch_64_macho(void *ptr, t_nm *file)
 {
     void *header;
     void *load;
@@ -123,7 +202,9 @@ void arch_64_macho(void *ptr)
     while (i > 0)
     {
         if (((struct load_command *)segment)->cmd == LC_SYMTAB)
-            scroll_section_64_macho(ptr, segment, endian);
+            scroll_section_64_macho(ptr, segment, endian, file);
+        else if (((struct load_command*)segment)->cmd == LC_SEGMENT_64)
+            get_sections_64(file, (struct segment_command_64*)segment, endian);
         segment += ((struct load_command *)segment)->cmdsize;
         if (endian == L_ENDIAN)
             swap_segment_command_64(segment);
@@ -131,7 +212,7 @@ void arch_64_macho(void *ptr)
     }
 }
 
-void arch_32_macho(void *ptr)
+void arch_32_macho(void *ptr, t_nm *file)
 {
     void *header;
     void *load;
@@ -153,7 +234,9 @@ void arch_32_macho(void *ptr)
     while (i > 0)
     {
         if (((struct load_command *)segment)->cmd == LC_SYMTAB)
-            scroll_section_32_macho(ptr, segment, endian);
+            scroll_section_32_macho(ptr, segment, endian, file);
+        else if (((struct load_command*)segment)->cmd == LC_SEGMENT)
+            get_sections(file, (struct segment_command*)segment, endian);
         segment += ((struct load_command *)segment)->cmdsize;
         if (endian == L_ENDIAN)
             swap_segment_command(segment);

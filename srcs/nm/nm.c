@@ -8,9 +8,9 @@ void    read_file_nm(void *ptr, t_nm *file)
     (void)file;
     magic = *(uint32_t*)ptr;
     if (magic == MH_MAGIC || magic == MH_CIGAM)
-        arch_32_macho(ptr);
+        arch_32_macho(ptr, file);
     else if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
-        arch_64_macho(ptr);
+        arch_64_macho(ptr, file);
     // else if (magic == FAT_MAGIC || magic == FAT_CIGAM)
         // arch_32_fat(ptr, file);
     // else if (magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64)
@@ -23,8 +23,11 @@ void    ft_nm(char *arg, t_nm *file)
 {
     void    *ptr;
 
-    ft_putstr(arg);
-    ft_putstr(":\n");
+    if (file->ac > 2)
+    {
+        ft_putstr(arg);
+        ft_putstr(":\n");
+    }
     if (!(ptr = get_image(file, arg)))
         ft_putendl_fd("ERROR", 2);
     else
@@ -43,9 +46,16 @@ int     main(int ac, char **av)
     if (ac < 2)
         return (0);
     file = malloc(sizeof(t_nm));
+    file->ac = ac;
+    file->sections = NULL;
     i = 0;
     while (av[++i])
         ft_nm(av[i], file);
+    while (file->sect_start)
+    {
+        free(file->sect_start);
+        file->sect_start = file->sect_start->next;
+    }
     free(file);
     return (0);
 }

@@ -29,20 +29,31 @@
 # include <stdio.h>
 // TMP
 
-typedef struct  s_nm
+typedef struct                  s_sections
 {
-        void    *ptr;
-        size_t  size;
-        int     fd;
-        char    type[5];
-        int     endian;    
-}               t_nm;
+        char                    segname[16];
+        char                    sectname[16];
+        struct s_sections       *next;
+}                               t_sections;
+
+
+typedef struct                  s_nm
+{
+        void                    *ptr;
+        size_t                  size;
+        int                     fd;
+        char                    type[5];
+        int                     endian;
+        int                     ac;
+        t_sections              *sections;
+        t_sections              *sect_start;
+}                               t_nm;
 
 void            ft_nm(char *arg, t_nm *file);
 void            read_file(void *ptr, t_nm *file);
 
-void            arch_64_macho(void *ptr);
-void            arch_32_macho(void *ptr);
+void            arch_64_macho(void *ptr, t_nm *file);
+void            arch_32_macho(void *ptr, t_nm *file);
 
 void            *get_image(t_nm *file, char *av);
 
