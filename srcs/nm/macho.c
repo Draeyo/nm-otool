@@ -170,6 +170,31 @@ static void print_hex(unsigned long nb)
         ft_putchar(tmp[nb]);
 }
 
+// static void get_hex(unsigned long nb, char ret[17])
+// {
+//     // char        ret[17];
+//     const char  *tmp = "0123456789abcdef";
+//     int         i;
+
+// 	i = 0;
+// 	ret[16] = '\0';
+// 	while (i < 16)
+// 	{
+// 		ret[i] = '0';
+// 		i++;
+// 	}
+//     i = 15;
+//     while (i > 0)
+//     {
+//         if (nb >= 16)
+//             ret[i] = tmp[nb % 16];
+//         else
+//             ret[i] = tmp[nb];
+//         nb /= 16;
+//         i--;
+//     }
+// }
+
 static void scroll_section_64_macho(void *ptr, struct symtab_command *segment, int endian, t_nm *file)
 {
     struct nlist_64 *nlist;
