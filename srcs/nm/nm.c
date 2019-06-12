@@ -11,10 +11,10 @@ void    read_file_nm(void *ptr, t_nm *file)
         arch_32_macho(ptr, file);
     else if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
         arch_64_macho(ptr, file);
-    // else if (magic == FAT_MAGIC || magic == FAT_CIGAM)
-        // arch_32_fat(ptr, file);
-    // else if (magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64)
-        // arch_64_fat(ptr, file);
+    else if (magic == FAT_MAGIC || magic == FAT_CIGAM)
+        arch_32_fat(ptr, file);
+    else if (magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64)
+        arch_64_fat(ptr, file);
     else
         printf("unknown architecture\n");
 }

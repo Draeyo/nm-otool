@@ -50,10 +50,13 @@ typedef struct                  s_nm
 }                               t_nm;
 
 void            ft_nm(char *arg, t_nm *file);
-void            read_file(void *ptr, t_nm *file);
+void            read_file_nm(void *ptr, t_nm *file);
 
 void            arch_64_macho(void *ptr, t_nm *file);
 void            arch_32_macho(void *ptr, t_nm *file);
+
+void            arch_32_fat(void *ptr, t_nm *file);
+void            arch_64_fat(void *ptr, t_nm *file);
 
 void            *get_image(t_nm *file, char *av);
 

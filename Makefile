@@ -12,13 +12,13 @@ STATIC_DIR = srcs/static/
 
 NM_FILES = $(NM_DIR)nm.c \
 			$(NM_DIR)macho.c \
+			$(NM_DIR)fat.c \
 			$(NM_DIR)save_filetype.c \
 			$(NM_DIR)get_image.c \
 			$(NM_DIR)align.c \
 			$(NM_DIR)swap_fat.c \
 			$(NM_DIR)swap_mach.c \
 			$(NM_DIR)swap_bytes.c
-		#$(STATIC_FILES)
 
 OTOOL_FILES = $(OTOOL_DIR)otool.c \
 			$(OTOOL_DIR)macho.c \
@@ -30,18 +30,12 @@ OTOOL_FILES = $(OTOOL_DIR)otool.c \
 			$(OTOOL_DIR)swap_fat.c \
 			$(OTOOL_DIR)swap_mach.c \
 			$(OTOOL_DIR)swap_bytes.c
-			#$(STATIC_FILES)
-
-#STATIC_FILES = $(STATIC_DIR)align.c \
-			$(STATIC_DIR)swap_fat.c \
-			$(STATIC_DIR)swap_mach.c \
-			$(STATIC_DIR)swap_bytes.c 
 
 SRC_FILES = $(NM_FILES) $(OTOOL_FILES)
 
-OTOOL_SRC = $(OTOOL_FILES)# $(STATIC_FILES)
+OTOOL_SRC = $(OTOOL_FILES)
 
-NM_SRC = $(NM_FILES)# $(STATIC_FILES)
+NM_SRC = $(NM_FILES)
 
 SRC = $(addprefix $(SRC_PATH),$(SRC_FILES))
 
