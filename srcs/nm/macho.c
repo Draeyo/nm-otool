@@ -2,8 +2,8 @@
 
 static char *get_sectname_from_list(uint8_t index, t_nm *file)
 {
-    int         i;
-    t_sections  *tmp;
+    int i;
+    t_sections *tmp;
 
     i = 0;
     tmp = file->sect_start;
@@ -76,7 +76,7 @@ static void get_sections_64(t_nm *file, struct segment_command_64 *segment, int 
     }
 }
 
-static void select_nsect_type_64(t_nm *file, struct nlist_64* nlist)
+static void select_nsect_type_64(t_nm *file, struct nlist_64 *nlist)
 {
     if (!ft_strcmp(get_sectname_from_list(nlist->n_sect - 1, file), SECT_BSS))
         ft_putchar(nlist->n_type & N_EXT ? 'B' : 'b');
@@ -84,11 +84,11 @@ static void select_nsect_type_64(t_nm *file, struct nlist_64* nlist)
         ft_putchar(nlist->n_type & N_EXT ? 'T' : 't');
     else if (!ft_strcmp(get_sectname_from_list(nlist->n_sect - 1, file), SECT_DATA))
         ft_putchar(nlist->n_type & N_EXT ? 'D' : 'd');
-    else    
+    else
         ft_putchar(nlist->n_type & N_EXT ? 'S' : 's');
 }
 
-static void select_nsect_type(t_nm *file, struct nlist* nlist)
+static void select_nsect_type(t_nm *file, struct nlist *nlist)
 {
     if (!ft_strcmp(get_sectname_from_list(nlist->n_sect - 1, file), SECT_BSS))
         ft_putchar(nlist->n_type & N_EXT ? 'B' : 'b');
@@ -97,8 +97,8 @@ static void select_nsect_type(t_nm *file, struct nlist* nlist)
     else if (!ft_strcmp(get_sectname_from_list(nlist->n_sect - 1, file), SECT_DATA))
         ft_putchar(nlist->n_type & N_EXT ? 'D' : 'd');
     // else if (!ft_strcmp(file->sect_start[nlist->n_sect - 1].sectname, SECT_COMMON))
-        // ft_putchar(nlist->n_type & N_EXT ? 'C' : 'c');
-    else    
+    // ft_putchar(nlist->n_type & N_EXT ? 'C' : 'c');
+    else
         ft_putchar(nlist->n_type & N_EXT ? 'S' : 's');
 }
 
@@ -180,10 +180,10 @@ static void print_hex(unsigned long nb)
 // 	ret[16] = '\0';
 // 	while (i < 16)
 // 	{
-// 		ret[i] = '0';
+// 		ret[i] = nb ? '0' : ' ';
 // 		i++;
 // 	}
-//     i = 15;
+//     i = nb ? 15 : 0;
 //     while (i > 0)
 //     {
 //         if (nb >= 16)
