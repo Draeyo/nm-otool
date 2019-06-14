@@ -18,7 +18,11 @@ NM_FILES = $(NM_DIR)nm.c \
 			$(NM_DIR)align.c \
 			$(NM_DIR)swap_fat.c \
 			$(NM_DIR)swap_mach.c \
-			$(NM_DIR)swap_bytes.c
+			$(NM_DIR)swap_bytes.c \
+			$(NM_DIR)print.c \
+			$(NM_DIR)print_nm.c \
+			$(NM_DIR)sections.c \
+			$(NM_DIR)get_result.c \
 
 OTOOL_FILES = $(OTOOL_DIR)otool.c \
 			$(OTOOL_DIR)macho.c \

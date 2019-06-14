@@ -1,12 +1,10 @@
 #include "nm.h"
 
-void    read_file_nm(void *ptr, t_nm *file)
+void read_file_nm(void *ptr, t_nm *file)
 {
-    uint32_t    magic;
+    uint32_t magic;
 
-    //
-    (void)file;
-    magic = *(uint32_t*)ptr;
+    magic = *(uint32_t *)ptr;
     if (magic == MH_MAGIC || magic == MH_CIGAM)
         arch_32_macho(ptr, file);
     else if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
@@ -19,9 +17,9 @@ void    read_file_nm(void *ptr, t_nm *file)
         printf("unknown architecture\n");
 }
 
-void    ft_nm(char *arg, t_nm *file)
+void ft_nm(char *arg, t_nm *file)
 {
-    void    *ptr;
+    void *ptr;
 
     if (file->ac > 2)
     {
@@ -38,24 +36,32 @@ void    ft_nm(char *arg, t_nm *file)
     }
 }
 
-int     main(int ac, char **av)
+int main(int ac, char **av)
 {
-    t_nm    *file;
-    int     i;
+    t_nm *file;
+    int i;
 
     if (ac < 2)
         return (0);
-    file = malloc(sizeof(t_nm));
-    file->ac = ac;
-    file->sections = NULL;
     i = 0;
     while (av[++i])
-        ft_nm(av[i], file);
-    while (file->sect_start)
     {
-        free(file->sect_start);
-        file->sect_start = file->sect_start->next;
+        file = malloc(sizeof(t_nm));
+        file->sections = NULL;
+        file->ac = ac;
+        ft_nm(av[i], file);
+        while (file->res_start)
+        {
+            free(file->res_start->content);
+            free(file->res_start);
+            file->res_start = file->res_start->next;
+        }
+        while (file->sect_start)
+        {
+            free(file->sect_start);
+            file->sect_start = file->sect_start->next;
+        }
+        free(file);
     }
-    free(file);
     return (0);
 }

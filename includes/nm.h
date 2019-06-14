@@ -29,6 +29,15 @@
 # include <stdio.h>
 // TMP
 
+typedef struct                  s_result
+{
+        int                     padding;
+        char                    offset[17];
+        char                    symtype[4];
+        char                    *content;
+        struct s_result         *next;
+}                               t_result;
+
 typedef struct                  s_sections
 {
         char                    segname[16];
@@ -47,6 +56,9 @@ typedef struct                  s_nm
         int                     ac;
         t_sections              *sections;
         t_sections              *sect_start;
+        t_result                *result;
+        t_result                *res_tmp;
+        t_result                *res_start;
 }                               t_nm;
 
 void            ft_nm(char *arg, t_nm *file);
@@ -85,5 +97,21 @@ void            swap_section_64(struct section_64 *s, uint32_t nsects);
 void            swap_fat_header(struct fat_header *fh);
 void            swap_fat_arch(struct fat_arch *fa);
 void            swap_fat_arch_64(struct fat_arch_64 *fa);
+
+void            print_symtype_64(struct nlist_64 *nlist, t_nm *file);
+void            print_symtype(struct nlist *nlist, t_nm *file);
+void            hex_padding16(unsigned long nb, t_nm *file);
+void            print_hex(unsigned long nb);
+void            get_hex(unsigned long nb, t_nm *file);
+
+void            print_nm(t_nm *file);
+
+char            *get_sectname_from_list(uint8_t index, t_nm *file);
+void            get_sections(t_nm *file, struct segment_command *segment, int endian);
+void            get_sections_64(t_nm *file, struct segment_command_64 *segment, int endian);
+void            select_nsect_type_64(t_nm *file, struct nlist_64 *nlist);
+void            select_nsect_type(t_nm *file, struct nlist *nlist);
+
+void            get_result(t_nm *file);
 
 # endif
