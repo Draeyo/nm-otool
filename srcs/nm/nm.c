@@ -21,6 +21,7 @@ void ft_nm(char *arg, t_nm *file)
 {
     void *ptr;
 
+    // maybe create a new map and new file struct for every fat arch
     if (file->ac > 2)
     {
         ft_putstr(arg);
@@ -44,10 +45,11 @@ int main(int ac, char **av)
     if (ac < 2)
         return (0);
     i = 0;
+    // call this in new function
     while (av[++i])
     {
         file = malloc(sizeof(t_nm));
-        file->sections = NULL;
+        ft_bzero(file, sizeof(t_nm));
         file->ac = ac;
         ft_nm(av[i], file);
         while (file->res_start)
