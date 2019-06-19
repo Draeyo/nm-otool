@@ -2,7 +2,7 @@
 
 void get_result(t_nm *file)
 {
-    if (!file->result)
+    if (!file->res_start)
     {
         file->result = file->res_tmp;
         file->res_start = file->result;

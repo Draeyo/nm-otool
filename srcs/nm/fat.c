@@ -22,19 +22,17 @@ void    arch_32_fat(void *ptr, t_nm *file)
         if (magic == FAT_CIGAM)
             swap_fat_arch(fat);
         i++;
-        // while (file->res_start)
-        // {
-        //     free(file->res_start->content);
-        //     free(file->res_start);
-        //     file->res_start = file->res_start->next;
-        // }
-        // file->res_start = NULL;
-        // while (file->sect_start)
-        // {
-        //     free(file->sect_start);
-        //     file->sect_start = file->sect_start->next;
-        // }
-        // file->sect_start = NULL;
+        while (file->res_start)
+        {
+            free(file->res_start->content);
+            free(file->res_start);
+            file->res_start = file->res_start->next;
+        }
+        while (file->sect_start)
+        {
+            free(file->sect_start);
+            file->sect_start = file->sect_start->next;
+        }
     }
 }
 
@@ -60,18 +58,16 @@ void    arch_64_fat(void *ptr, t_nm *file)
         if (magic == FAT_CIGAM_64)
             swap_fat_arch_64(fat);
         i++;
-        // while (file->res_start)
-        // {
-        //     free(file->res_start->content);
-        //     free(file->res_start);
-        //     file->res_start = file->res_start->next;
-        // }
-        // file->res_start = NULL;
-        // while (file->sect_start)
-        // {
-        //     free(file->sect_start);
-        //     file->sect_start = file->sect_start->next;
-        // }
-        // file->sect_start = NULL;
+        while (file->res_start)
+        {
+            free(file->res_start->content);
+            free(file->res_start);
+            file->res_start = file->res_start->next;
+        }
+        while (file->sect_start)
+        {
+            free(file->sect_start);
+            file->sect_start = file->sect_start->next;
+        }
     }
 }

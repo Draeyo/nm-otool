@@ -1,36 +1,10 @@
 #include "nm.h"
 
-// static void get_hex(unsigned long nb, char ret[17])
-// {
-//     // char        ret[17];
-//     const char  *tmp = "0123456789abcdef";
-//     int         i;
-
-// 	i = 0;
-// 	ret[16] = '\0';
-// 	while (i < 16)
-// 	{
-// 		ret[i] = nb ? '0' : ' ';
-// 		i++;
-// 	}
-//     i = nb ? 15 : 0;
-//     while (i > 0)
-//     {
-//         if (nb >= 16)
-//             ret[i] = tmp[nb % 16];
-//         else
-//             ret[i] = tmp[nb];
-//         nb /= 16;
-//         i--;
-//     }
-// }
-
 static void scroll_section_64_macho(void *ptr, struct symtab_command *segment, int endian, t_nm *file)
 {
     struct nlist_64 *nlist;
     uint32_t i;
     void *strtable;
-    // int padding;
 
     nlist = (void *)ptr + segment->symoff;
     strtable = (void *)ptr + segment->stroff;
@@ -44,19 +18,10 @@ static void scroll_section_64_macho(void *ptr, struct symtab_command *segment, i
             file->res_tmp = malloc(sizeof(t_result));
             ft_bzero(file->res_tmp, sizeof(t_result));
             hex_padding16(nlist->n_value, file);
-            // if (padding < 16)
-            //     while (padding--)
-            //         ft_putchar('0');
-            // else
-            //     while (padding--)
-            //         ft_putchar(' ');
-            // if (nlist->n_value)
-            //     print_hex(nlist->n_value);
             get_hex(nlist->n_value, file);
             print_symtype_64(nlist, file);
             file->res_tmp->content = ft_strdup(strtable + nlist->n_un.n_strx);
             get_result(file);
-            // ft_putendl(strtable + nlist->n_un.n_strx);
         }
         nlist = (void *)nlist + sizeof(struct nlist_64);
         i++;
@@ -68,7 +33,6 @@ static void scroll_section_32_macho(void *ptr, struct symtab_command *segment, i
     struct nlist *nlist;
     uint32_t i;
     void *strtable;
-    // int padding;
 
     nlist = (void *)ptr + segment->symoff;
     strtable = (void *)ptr + segment->stroff;
@@ -76,22 +40,16 @@ static void scroll_section_32_macho(void *ptr, struct symtab_command *segment, i
     (void)endian;
     while (i < segment->nsyms)
     {
-        file->res_tmp = malloc(sizeof(t_result));
-        ft_bzero(file->res_tmp, sizeof(t_result));
-        hex_padding16(nlist->n_value, file);
-        // if (padding < 16)
-        //     while (padding--)
-        //         ft_putchar('0');
-        // else
-        //     while (padding--)
-        //         ft_putchar(' ');
-        // if (nlist->n_value)
-        //     print_hex(nlist->n_value);
-        get_hex(nlist->n_value, file);
-        print_symtype(nlist, file);
-        file->res_tmp->content = ft_strdup(strtable + nlist->n_un.n_strx);
-        get_result(file);
-        // ft_putendl(strtable + nlist->n_un.n_strx);
+        if (!(nlist->n_type & N_STAB))
+        {
+            file->res_tmp = malloc(sizeof(t_result));
+            ft_bzero(file->res_tmp, sizeof(t_result));
+            hex_padding16(nlist->n_value, file);
+            get_hex(nlist->n_value, file);
+            print_symtype(nlist, file);
+            file->res_tmp->content = ft_strdup(strtable + nlist->n_un.n_strx);
+            get_result(file);
+        }
         nlist = (void *)nlist + sizeof(struct nlist);
         i++;
     }

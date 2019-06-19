@@ -34,7 +34,7 @@ void get_sections(t_nm *file, struct segment_command *segment, int endian)
         ft_strcpy(tmp->segname, sect->segname);
         ft_strcpy(tmp->sectname, sect->sectname);
         tmp->next = NULL;
-        if (!file->sections)
+        if (!file->sect_start)
         {
             file->sections = tmp;
             file->sect_start = file->sections;
@@ -74,7 +74,7 @@ void get_sections_64(t_nm *file, struct segment_command_64 *segment, int endian)
         // else
         //     file->sect_start = tmp;
         // file->sections = tmp;
-        if (!file->sections)
+        if (!file->sect_start)
         {
             file->sections = tmp;
             file->sect_start = file->sections;
