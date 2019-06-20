@@ -16,7 +16,12 @@ void    arch_32_fat(void *ptr, t_nm *file)
     while (i < ((struct fat_header*)ptr)->nfat_arch)
     {
         // if (fat->cputype == CPU_TYPE_X86_64)
-        ft_putendl(((NXArchInfo*)NXGetArchInfoFromCpuType(fat->cputype, fat->cpusubtype))->description);
+        if ((((NXArchInfo*)NXGetArchInfoFromCpuType(fat->cputype, fat->cpusubtype))->cputype >> 16))
+        {
+            ft_putstr(((NXArchInfo*)NXGetArchInfoFromCpuType(fat->cputype & 0x0000ff, fat->cpusubtype))->name);
+            ft_putstr(":");
+        }
+        ft_putendl(((NXArchInfo*)NXGetArchInfoFromCpuType(fat->cputype, fat->cpusubtype))->name);
         read_file_nm(ptr + fat->offset, file);
         fat = (void*)fat + sizeof(struct fat_arch);
         if (magic == FAT_CIGAM)

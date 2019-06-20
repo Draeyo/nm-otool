@@ -12,7 +12,6 @@ static void scroll_section_64_macho(void *ptr, struct symtab_command *segment, i
     (void)endian;
     while (i < segment->nsyms)
     {
-        // see this condition
         if (!(nlist->n_type & N_STAB))
         {
             file->res_tmp = malloc(sizeof(t_result));

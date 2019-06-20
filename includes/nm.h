@@ -29,9 +29,22 @@
 # define L_ENDIAN 1
 # define UNK_ENDIAN -1
 
-// TMP
-# include <stdio.h>
-// TMP
+#define CPU_ANY         "any"
+#define CPU_VAX         "vax"
+#define CPU_MC680x0     "mc680x0"
+#define CPU_X86         "x86"
+#define CPU_I386        "i386"
+#define CPU_X86_64      "x86_64"
+#define CPU_MC98000     "mc98000"
+#define CPU_HPPA        "hppa"
+#define CPU_ARM         "arm"
+#define CPU_ARM64       "arm64"
+#define CPU_ARM64_32    "arm64_32"
+#define CPU_MC88000     "mc88000"
+#define CPU_SPARC       "sparc"
+#define CPU_I860        "i860"
+#define CPU_POWERPC     "powerpc"
+#define CPU_POWERPC64   "powerpc64"
 
 typedef struct                  s_result
 {

@@ -14,7 +14,7 @@ void read_file_nm(void *ptr, t_nm *file)
     else if (magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64)
         arch_64_fat(ptr, file);
     else
-        printf("unknown architecture\n");
+        ft_putendl_fd("unknown architecture", 2);
 }
 
 void ft_nm(char *arg, t_nm *file)
