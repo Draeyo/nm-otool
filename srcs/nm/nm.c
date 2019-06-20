@@ -60,7 +60,6 @@ static void manage_files(char *arg, int ac)
 
 int main(int ac, char **av)
 {
-    // t_nm *file;
     int i;
 
     if (ac < 2)

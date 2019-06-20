@@ -39,7 +39,10 @@ void print_nm(t_nm *file)
     tmp = file->res_start;
     while (tmp)
     {
-        ft_putstr(tmp->offset);
+        if (file->arch == ARCH64)
+            ft_putstr(tmp->offset);
+        else
+            ft_putstr(tmp->offset + 8);
         ft_putstr(tmp->symtype);
         ft_putendl(tmp->content);
         tmp = tmp->next;

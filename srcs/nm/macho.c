@@ -65,6 +65,7 @@ void arch_64_macho(void *ptr, t_nm *file)
 
     endian = (*(uint32_t *)ptr) == MH_CIGAM_64 ? L_ENDIAN : B_ENDIAN;
     header = (struct mach_header_64 *)ptr;
+    file->arch = ARCH64;
     if (endian == L_ENDIAN)
         swap_mach_header_64(header);
     i = ((struct mach_header_64 *)header)->ncmds;
@@ -98,6 +99,7 @@ void arch_32_macho(void *ptr, t_nm *file)
 
     endian = (*(uint32_t *)ptr) == MH_CIGAM ? L_ENDIAN : B_ENDIAN;
     header = (struct mach_header *)ptr;
+    file->arch = ARCH32;
     if (endian == L_ENDIAN)
         swap_mach_header(header);
     i = ((struct mach_header *)header)->ncmds;

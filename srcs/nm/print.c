@@ -6,7 +6,6 @@ void print_symtype_64(struct nlist_64 *nlist, t_nm *file)
 
     file->res_tmp->symtype[3] = '\0';
     tmp = nlist->n_type & N_TYPE;
-    // ft_putchar(' ');
     file->res_tmp->symtype[0] = ' ';
     if (tmp == N_UNDF)
         file->res_tmp->symtype[1] = nlist->n_type & N_EXT ? 'U' : 'u';
@@ -20,7 +19,6 @@ void print_symtype_64(struct nlist_64 *nlist, t_nm *file)
         file->res_tmp->symtype[1] = nlist->n_type & N_EXT ? 'Y' : 'y';
     else
         file->res_tmp->symtype[1] = '?';
-    // ft_putchar(' ');
     file->res_tmp->symtype[2] = ' ';
 }
 
@@ -30,7 +28,6 @@ void print_symtype(struct nlist *nlist, t_nm *file)
 
     file->res_tmp->symtype[3] = '\0';
     tmp = nlist->n_type & N_TYPE;
-    // ft_putchar(' ');
     file->res_tmp->symtype[0] = ' ';
     if (tmp == N_UNDF)
         file->res_tmp->symtype[1] = nlist->n_type & N_EXT ? 'U' : 'u';
@@ -44,7 +41,6 @@ void print_symtype(struct nlist *nlist, t_nm *file)
         file->res_tmp->symtype[1] = nlist->n_type & N_EXT ? 'Y' : 'y';
     else
         file->res_tmp->symtype[1] = '?';
-    // ft_putchar(' ');
     file->res_tmp->symtype[2] = ' ';
 }
 

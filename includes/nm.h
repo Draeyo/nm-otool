@@ -21,6 +21,10 @@
 # define FAT64_TYPE "FAT64"
 # define UNKNOWN_TYPE "UNKNW"
 
+# define ARCH32 1
+# define ARCH64 2
+# define UNK_ARCH 0
+
 # define B_ENDIAN 0
 # define L_ENDIAN 1
 # define UNK_ENDIAN -1
@@ -54,6 +58,7 @@ typedef struct                  s_nm
         char                    type[5];
         int                     endian;
         int                     ac;
+        int                     arch;
         t_sections              *sections;
         t_sections              *sect_start;
         t_result                *result;
